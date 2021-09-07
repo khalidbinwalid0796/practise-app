@@ -1,0 +1,15 @@
+Laravel 8
+
+1. install laravel ui package for authentication(by default bootstrap supported)
+link : https://github.com/laravel/ui
+
+2. bootstrap support in laravel 8
+link : https://github.com/laravel/ui(without authentication cmd)
+
+3. multi-guard authentication, custom middleware create, rules set in default middleware
+
+4. factory & seeder for generating fake data
+
+5. validation using default request, custom request & custom rules
+
+6. crud with api resource, model binding

@@ -1,0 +1,1 @@
+Class->categorization of real life objects according to it's properties and behavior.

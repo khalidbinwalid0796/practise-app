@@ -1,0 +1,202 @@
+crud8-app-->bootstrap support,traits(soft delete),Scopes,Accessor & Mutators,Query Casting(how to cast json or array),
+	    Custom Casting,validation(default request,custom request, rule)
+
+lara7-observer-->observer
+
+camelCase-->first word small letter then other words capital
+pascal Case or capital camelCase-->all words capital
+snake_case-->all words small & join with underscore
+
+// web.php
+
+'namespace' => 'Admin' --> Admin/UserController
+'middleware' => 'auth' --> 'middleware' => 'auth:admin'
+
+Route::group(['as'=>'admin.','namespace' => 'Admin', 
+            'prefix' => 'admin',
+            'middleware' => 'auth'], function() {
+    Route::resource('users', 'UserController');
+});
+
+            if($request->routeIs('admin.*')){
+                return route('admin.login');
+            }
+	   @if(Request::is('admin*'))
+	   if(Route::has('register'))
+
+
+traits--> Traits are nothing but a reusable collection of methods and functions that can be incorporated 
+	  in any other classes or controller.app\Http ar vitore Traits folder create kore trait make korte hoy.
+
+Scopes-->app ar vitore Scopes folder create kore global scope make kora hoy
+
+
+observer-->php artisan make:observer UserObserver --model=User; User model ar jonno observer create hoy.
+	   We need to register this observer in EventServiceProvider class inside the boot() function of 
+	   app/Providers/EventServiceProvider.php. app/Providers/AppServiceProvider.php file a o register kora jai.
+
+Accessor & Mutators--> define in model
+
+Query Casting-->define in model
+
+Custom Casting-->app/Casts ar vitore define kora hoy.set & get ar vitore condition define kora hoy. And finally
+		 model ar vitore class ta register kora hoy.
+
+
+user has many posts & comments;
+posts has many comments
+
+here, comments is the relationship name
+$posts = Post::has('comments')->get(); return those posts who have at least one comments
+$posts = Post::whereHas('comments')->get(); simillar to has() but whereHas() support clouser/callback function
+
+
+ *      //Route Checking 
+ *      if(Route::has('register'))
+ *      if($request->routeIs('register'))
+
+factory & seeder -->
+fake data insert using only factory & tinker cmd
+php artisan tinker
+\use App\Models\User::count(10)->create()
+
+## using only gates
+1. controller a method ar moddhe rule define kora hoy
+2. AuthServiceProvider ar moddhe gate define korte hoy
+3. view ar vitore for example index.blade.php te render kora lage
+4. blade file a can endcan use kora hoy
+
+##gate with polices
+1. create police by cmd 
+2. AuthServiceProvider ar moddhe gate define korte hoy
+3. policy ar vitore method gulor jonno policy define kora lage
+4. blade file a can endcan use kora hoy
+
+## only policy without model
+1. create police by cmd 
+2. AuthServiceProvider ar moddhe class define korte hoy
+3. policy ar vitore method gulor jonno policy define kora lage
+4. blade file a if endif use kora hoy
+5. controller a  $this->authorize() aita likhte hoy & parameter pass korte hoy policy te j function gulo
+define kora oi gulo And blade file o if condition ar vitore policy ar method ar nam dea lage
+
+## only policy with model
+1. php artisan make:policy StudentModelPolicy --model=Student
+2. AuthServiceProvider ar moddhe StudentModelPolicy class define korte hoy
+3. blade file a if endif use kora hoy & if condition ar vitore policy ar method ar nam dea lage
+4. controller a constructor function define & create,store ai function gulor khetre kono condition dea lage na
+5. StudentModelPolicy class code define korte hobe
+6. must model binding korte hobe controller ar method a
+
+#### Service container-->used for dependency injection,
+dependency injection-->1ta class ar object onno 1ta class ar object ar opor depend kore,for example custom request
+1. register on service provider
+2. app/Billing/PaymentGateway holo service container
+3. depend on app/Order/OrderDetails
+web.php
+class Container{
+	protected $bindings = [];
+	public function bind($name, callable $resolver){ //object gulo bind korbo
+		$this->bindings[$name] = $resolver;
+	}
+	public function make($name){  //bind kora object gulo call korbo
+		$this->bindings[$name]();
+	}
+}
+
+$container = new Container();
+$container->bind('Game' function(){
+	return 'Cricket';
+});
+dd($container->make('Game'));
+
+=========effective
+class Cricket{}
+class Game{
+	public $cricket;
+	public function __construct(Cricket $cricket){
+		$this->cricket = $cricket;
+	}
+}
+//app()->bind('Game',function(){
+//	return new Game(new Cricket);
+//});
+dd(app()->make('Game')); //bind na korle o hoy, aivabe call korle hoy
+---------
+app()->bind('Random',function(){
+	return Str::random(10);
+});
+dump(resolve('Random'));
+dd(resolve('Random'));
+akhn joto jaigai ai obj call korbo & jode value initialize kore de tahole value change hoye jabe
+app()->singleton('Random',function(){
+	return Str::random(10);
+});
+dump(resolve('Random'));
+dd(resolve('Random'));
+
+
+### Service Providers--> are the central place of all laravel application bootstrapping
+1. create custom Service Providers using cmd
+2. Service container register kora hoy Service Providers a, jokhon onek bese dependency injection
+kora lage tokhon custom Service Providers create kore Service container register korle app
+ar performance valo thake
+
+### Facades
+class ar method gulo static way te call korar subidha dei
+
+### contracts or interface
+
+### Custom Helper function
+
+1. create Helpers folder in app & also create Helper.php in Helpers folder
+2. register globally-->composer.json a autoload object ar moddhe "files":["app/Helpers/Helper.php"]
+3. composer dump-autoload
+
+### middleware
+1. group, route middleware
+2. middleware priority, terminate
+3. middleware with parameter
+
+## file storage
+
+## mail
+
+## collection --> collect() takes array as parameter & applies method to filter data using method chaining
+
+## Task Scheduling --> suppose, user der birth day wish korbo or j user
+gulor email verified na tader k delete kore debe.aigulor jonno custom cmd create kora hoy & seta processing
+ar jonno Task Scheduling
+
+1. cmd make korte hobe unverivied user gulo delete korar jonno like
+	php artisan make:command DeleteUser --command=delete:user
+2. cmd registration korte hobe kernel a
+3. console ar kernel ar schedule() a cmd ta add korte hobe
+4. Console\Commands\DeleteUser ar handle() a delete korar logic ta likhte hoy
+5. Php artisan schedule:run Task Scheduling run korar jonno ai cmd chalano lage, but server a thakle 
+coron job use korle cmd run kora lage na
+
+
+## evevt with listener
+example : while registering a new user, will get a mail notification.
+
+1. EventServiceProvider ar vitore event & listener define kore cmd run korle event & listener 
+	create hoy.
+
+2. alada alada kore event & listener create kore jai, tobe listener cmd ar sathe event ar name
+   bind kore dile listener ar handle() a event ar object create hoy na hole manually object die dea lage
+
+3. UserCreated event ar moddhe user define korte hobe j user gulore mail nitification pathabo
+4. listener ar vitore event ar data gulo $event object die pai
+5. event--> model ar dispatchesEvents, model ar boot, observer ai 3ta use kore kora jai
+5. listener ar vitore Mail::to($event->user->email)->send(new WelcomeMail($event->user)); 
+	password hash kora ty $event->user ar jaigai request()->all() hobe
+6. model ar vitorer boot() ar code tuku RegisterController ar create() vitore dile o hoy
+
+
+
+
+
+
+
+
